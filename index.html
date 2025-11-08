@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="images/bali.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agora - Bali Island</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .nav-item {
+            position: relative;
+        }
+        .nav-link {
+            color: inherit;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .nav-link:hover {
+            opacity: 0.7;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown-content a:first-child {
+            border-radius: 4px 4px 0 0;
+        }
+        .dropdown-content a:last-child {
+            border-radius: 0 0 4px 4px;
+        }
+        /* Desktop hover */
+        @media (min-width: 769px) {
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+        }
+        /* Mobile and tablet click */
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+        /* Prevent text selection on mobile */
+        .nav-link {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-background"></div>
+    <header>
+        <a href="/index.html" class="logo-link">
+            <div class="logo-container">
+                <div class="spinning-logo"></div>
+            </div>
+        </a>
+        <nav class="nav-container">
+            <div class="nav-item">
+                <a href="/recess.html" class="nav-link">Our Menu</a>
+            </div>
+            <div class="nav-item dropdown" id="vendorsDropdown">
+                <span class="nav-link" id="vendorsToggle">Vendors ▼</span>
+                <div class="dropdown-content">
+                    <a href="/yanosrepublik.html">Desperado</a>
+                    <a href="/recess.html">Hennessy</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="ask-question" style="padding: 20px 0;">
+        <div style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        ">
+        <div id="vfrc-container" style="
+            max-width: 800px;
+            width: 90%;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        "></div>
+    </section>
+    <script type="text/javascript">
+      (function (document, tagName) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const salesPerson = urlParams.get('sales') || 'auto_update_user';
+    
+        // -------------------------
+        // File Upload Extension
+        // -------------------------
+        const FileUploadExtension = {
+          name: 'FileUpload',
+          type: 'response',
+          match: ({ trace }) =>
+            trace.type === 'ext_fileUpload' || trace.payload?.name === 'ext_fileUpload',
+    
+          render: ({ trace, element }) => {
+            const container = document.createElement('div');
+    
+            container.innerHTML = `
+              <style>
+                .file-upload-box {
+                  border: 2px dashed rgba(46, 110, 225, 0.5);
+                  padding: 16px;
+                  text-align: center;
+                  cursor: pointer;
+                  border-radius: 8px;
+                  font-size: 14px;
+                  font-weight: 500;
+                  color: #2e6ee1;
+                  background-color: rgba(46, 110, 225, 0.05);
+                  transition: all 0.2s ease;
+                }
+                .file-upload-box:hover {
+                  background-color: rgba(46, 110, 225, 0.15);
+                  border-color: rgba(46, 110, 225, 0.7);
+                }
+                .file-upload-box:active {
+                  background-color: rgba(46, 110, 225, 0.2);
+                }
+              </style>
+              <div class="file-upload-box">Click to upload</div>
+              <input type="file" hidden />
+            `;
+    
+            const fileInput = container.querySelector('input[type="file"]');
+            const uploadBox = container.querySelector('.file-upload-box');
+    
+            uploadBox?.addEventListener('click', () => fileInput?.click());
+    
+            fileInput?.addEventListener('change', async function () {
+              const file = this.files[0];
+              if (!file) return;
+    
+              container.innerHTML = `<div>Uploading ${file.name}...</div>`;
+    
+              try {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch('https://api.imgbb.com/1/upload?key=c7f0fc9881a6da201a18622dcd0e5cff', {
+                  method: 'POST',
+                  body: formData,
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.data?.url) {
+                  throw new Error('Failed to upload file');
+                }
+
+                const fileUrl = result.data.url;
+    
+                container.innerHTML = `<div>Analyzing ${file.name}...</div>`;
+    
+                window.voiceflow.chat.interact({
+                  type: 'complete',
+                  payload: { file: fileUrl },
+                });
+              } catch (err) {
+                console.error('Upload Error:', err);
+                container.innerHTML = '<div>Error during upload. Please try again.</div>';
+              }
+            });
+    
+            element.appendChild(container);
+          },
+        };
+        
+        const voiceflowScript = document.createElement(tagName);
+        const firstScriptTag = document.getElementsByTagName(tagName)[0];
+    
+        voiceflowScript.onload = () => {
+          window.voiceflow.chat.load({
+            verify: {
+              projectID: '6909dadf9d8198a5527020cf',
+            },
+            url: 'https://general-runtime.voiceflow.com',
+            versionID: 'production',
+            render: {
+              mode: 'embedded',
+              target: document.getElementById('vfrc-container')
+            },
+            assistant: {
+              extensions: [FileUploadExtension],
+              persistence: 'memory',
+            }
+          });
+        };
+    
+        voiceflowScript.src = 'https://cdn.voiceflow.com/widget-next/bundle.mjs';
+        voiceflowScript.type = 'text/javascript';
+        firstScriptTag.parentNode.insertBefore(voiceflowScript, firstScriptTag);
+      })(document, 'script');
+    </script>
+    <script>
+      // Vendors dropdown toggle for mobile and desktop
+      (function() {
+        const dropdown = document.getElementById('vendorsDropdown');
+        const toggle = document.getElementById('vendorsToggle');
+        
+        if (!dropdown || !toggle) return;
+        
+        // Toggle dropdown on click
+        toggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dropdown.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+          }
+        });
+        
+        // Prevent dropdown from closing when clicking inside
+        dropdown.addEventListener('click', function(e) {
+          e.stopPropagation();
+        });
+      })();
+    </script>   
+</body>
+</html>
