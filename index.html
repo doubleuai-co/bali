@@ -86,30 +86,22 @@
         </a>
         <nav class="nav-container">
             <div class="nav-item">
-                <a href="/menu.html" class="nav-link">MENU</a>
+                <a href="/index.html" class="nav-link">Return Home</a>
             </div>
         </nav>
     </header>
 
-    <section id="ask-question" style="padding: 20px 0;">
-        <div style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        ">
-        <div id="vfrc-container" style="
-            max-width: 800px;
-            width: 90%;
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-        "></div>
+    <section class="hero">
+      <div class="hero-image">
+        <img src="https://cm4-production-assets.s3.amazonaws.com/1761204499836-whatsapp-image-2025-10-23-at-05.24.00.jpeg" alt="Recess Menu">
+      </div>
     </section>
     <script type="text/javascript">
       (function (document, tagName) {
+        // Extract 'tableId' from the URL query parameter if present
         const urlParams = new URLSearchParams(window.location.search);
-        const salesPerson = urlParams.get('sales') || 'auto_update_user';
+        let initialTableId = urlParams.has("tableId") ? urlParams.get("tableId") : null;
+        window.tableId = initialTableId; // Set tableId globally (if any)
     
         // -------------------------
         // File Upload Extension
@@ -192,25 +184,38 @@
             element.appendChild(container);
           },
         };
-        
+    
         const voiceflowScript = document.createElement(tagName);
         const firstScriptTag = document.getElementsByTagName(tagName)[0];
     
         voiceflowScript.onload = () => {
           window.voiceflow.chat.load({
             verify: {
-              projectID: '69142dd54b68b23453e6f9f3',
+              projectID: '69142e094b68b23453e6fb2e',
             },
             url: 'https://general-runtime.voiceflow.com',
             versionID: 'production',
-            render: {
-              mode: 'embedded',
-              target: document.getElementById('vfrc-container')
-            },
             assistant: {
               extensions: [FileUploadExtension],
               persistence: 'memory',
+            },
+            launch: {
+              event: {
+                type: 'launch',
+                payload: {
+                  table_id: window.tableId || "undefined",
+                },
+              },
             }
+          }).then(() => {
+            window.voiceflow.chat.proactive.push(  
+              { type: 'text', payload: { message: 'One night. One vibe. One Recess. Let’s make it count. 🎧💃🏾' } },  
+              { type: 'text', payload: { message: 'Let’s get your order in. 🥂🔥' } }  
+            )
+          }).then(() => {
+            setTimeout(() => {
+              window.voiceflow.chat.open();
+            }, 5000);
           });
         };
     
@@ -218,34 +223,6 @@
         voiceflowScript.type = 'text/javascript';
         firstScriptTag.parentNode.insertBefore(voiceflowScript, firstScriptTag);
       })(document, 'script');
-    </script>
-    <script>
-      // Vendors dropdown toggle for mobile and desktop
-      (function() {
-        const dropdown = document.getElementById('vendorsDropdown');
-        const toggle = document.getElementById('vendorsToggle');
-        
-        if (!dropdown || !toggle) return;
-        
-        // Toggle dropdown on click
-        toggle.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          dropdown.classList.toggle('active');
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-          if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove('active');
-          }
-        });
-        
-        // Prevent dropdown from closing when clicking inside
-        dropdown.addEventListener('click', function(e) {
-          e.stopPropagation();
-        });
-      })();
-    </script>   
+    </script>      
 </body>
 </html>
