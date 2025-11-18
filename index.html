@@ -99,11 +99,15 @@
     </section>
     <script type="text/javascript">
       (function (document, tagName) {
-        // Extract 'tableId' from the URL query parameter if present
+       // Extract 'tableId' and 'vendorId' from the URL query parameters (if present)
         const urlParams = new URLSearchParams(window.location.search);
+
         let initialTableId = urlParams.has("tableId") ? urlParams.get("tableId") : null;
-        window.tableId = initialTableId; // Set tableId globally (if any)
-    
+        let initialVendorId = urlParams.has("vendorId") ? urlParams.get("vendorId") : null;
+
+        window.tableId = initialTableId;   // Set tableId globally (if any)
+        window.vendorId = initialVendorId; // Set vendorId globally (if any)
+
         // -------------------------
         // File Upload Extension
         // -------------------------
@@ -205,6 +209,7 @@
                 type: 'launch',
                 payload: {
                   table_id: window.tableId || "undefined",
+                  vendor_id: window.vendorId || "undefined",
                 },
               },
             }
