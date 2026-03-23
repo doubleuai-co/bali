@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BALI Africa — Build, Automate, Launch, Iterate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --bg2: #0e0e0e;
+      --accent: #0040ff;
+      --accent-dim: rgba(0, 64, 255, 0.12);
+      --text: #e8e8e8;
+      --muted: #666;
+      --border: rgba(255,255,255,0.07);
+      --card: #111111;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(12px);
+      background: rgba(8,8,8,0.7);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,64,255,0.15) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,64,255,0.3);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #6688ff;
+      margin-bottom: 40px;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .bali-letters {
+      display: flex;
+      gap: 0;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .bali-letter {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(80px, 18vw, 180px);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text);
+      position: relative;
+      display: inline-block;
+      transition: color 0.2s;
+      cursor: default;
+    }
+
+    .bali-letter:hover { color: var(--accent); }
+
+    .hero-expansion {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(11px, 2vw, 14px);
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .hero-expansion strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .hero-tagline {
+      font-size: clamp(16px, 3vw, 22px);
+      font-weight: 400;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+
+    .hero-tagline em {
+      color: var(--text);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+    }
+
+    .hero-cta:hover {
+      background: #1a57ff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,64,255,0.35);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--muted), transparent);
+      animation: scrollDown 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scrollDown {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* ── SECTION COMMON ── */
+    section {
+      padding: 100px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 56px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── DEMOS GRID ── */
+    .demos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+
+    .demo-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.25s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .demo-card:hover {
+      border-color: rgba(0,64,255,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,64,255,0.15);
+    }
+
+    .card-preview {
+      height: 200px;
+      background: linear-gradient(135deg, #0d0d1a 0%, #0a1628 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-preview-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,64,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,64,255,0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .card-preview-icon {
+      font-size: 42px;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 0 24px rgba(0,64,255,0.5));
+    }
+
+    .card-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0,64,255,0.2);
+      border: 1px solid rgba(0,64,255,0.3);
+      border-radius: 100px;
+      padding: 3px 10px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #7799ff;
+    }
+
+    .card-tag.live {
+      background: rgba(16,185,129,0.15);
+      border-color: rgba(16,185,129,0.3);
+      color: #34d399;
+    }
+
+    .card-tag.live::before {
+      content: '● ';
+      animation: pulse 2s infinite;
+    }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-product {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+    }
+
+    .card-arrow {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .demo-card:hover .card-arrow {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── COMING SOON CARD ── */
+    .demo-card.coming-soon {
+      opacity: 0.5;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .demo-card.coming-soon .card-tag {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.1);
+      color: var(--muted);
+    }
+
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .about-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-headline {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .about-headline span { color: var(--accent); }
+
+    .about-text {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .about-text p + p { margin-top: 16px; }
+
+    .about-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 24px;
+      transition: gap 0.2s;
+    }
+
+    .about-link:hover { gap: 10px; }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item { flex: 1; min-width: 120px; }
+
+    .stat-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-num span { color: var(--accent); }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-brand {
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .footer-brand span { color: var(--accent); }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── FADE IN ANIMATION ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      section { padding: 64px 24px; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; padding: 64px 24px; }
+      footer { flex-direction: column; align-items: flex-start; padding: 40px 24px; }
+      .stats-row { gap: 32px; }
+      .bali-letters { gap: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">BALI<span>.</span>africa</a>
+    <ul class="nav-links">
+      <li><a href="#demos">Demos</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="https://doubleuai.co" target="_blank">DoubleU AI ↗</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+
+    <div class="hero-badge">Demo Lab</div>
+
+    <div class="bali-letters">
+      <span class="bali-letter">B</span>
+      <span class="bali-letter">A</span>
+      <span class="bali-letter">L</span>
+      <span class="bali-letter">I</span>
+    </div>
+
+    <p class="hero-expansion">
+      <strong>Build</strong> · <strong>Automate</strong> · <strong>Launch</strong> · <strong>Iterate</strong>
+    </p>
+
+    <p class="hero-tagline">
+      A live lab of <em>AI products, prototypes, and demos</em><br/>
+      built by DoubleU AI — from idea to working product.
+    </p>
+
+    <a href="#demos" class="hero-cta">
+      Explore Demos
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+
+  <!-- DEMOS SECTION -->
+  <section id="demos">
+    <div class="fade-up">
+      <p class="section-label">// Live Builds</p>
+      <h2 class="section-title">Demos & Prototypes</h2>
+      <p class="section-sub">Every card is a real, working product. Click to try it.</p>
+    </div>
+
+    <div class="demos-grid fade-up">
+
+      <!-- CARD 1 — Mylo -->
+      <a href="#" class="demo-card">
+        <div class="card-preview">
+          <div class="card-preview-grid"></div>
+          <div class="card-preview-icon">🤖</div>
+          <span class="card-tag live">Live</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Mylo — AI Order Worker</h3>
+          <p class="card-desc">End-to-end AI order management for any commerce business — restaurants, clothing stores, groceries, pharmacies, and more. Handles pickup, delivery, and dine-in with real-time dashboard and payment validation.</p>
+          <div class="card-footer">
+            <span class="card-product">MYLO / COMMERCE</span>
+            <div class="card-arrow">→</div>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 2 — Aimco Agent -->
+      <a href="#" class="demo-card">
+        <div class="card-preview">
+          <div class="card-preview-grid"></div>
+          <div class="card-preview-icon">📊</div>
+          <span class="card-tag live">Live</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Sales Intelligence Agent</h3>
+          <p class="card-desc">AI sales assistant that logs opportunities, retrieves deal context, and manages follow-ups via natural language — built for enterprise sales teams.</p>
+          <div class="card-footer">
+            <span class="card-product">CUSTOM / SALES OPS</span>
+            <div class="card-arrow">→</div>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 3 — Neo -->
+      <a href="https://doubleuai.co" target="_blank" class="demo-card">
+        <div class="card-preview">
+          <div class="card-preview-grid"></div>
+          <div class="card-preview-icon">📅</div>
+          <span class="card-tag live">Live</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Neo — AI SDR</h3>
+          <p class="card-desc">Automates inbound lead handling and appointment booking for service businesses. Qualifies leads and books meetings 24/7 without human intervention.</p>
+          <div class="card-footer">
+            <span class="card-product">NEO / LEAD CAPTURE</span>
+            <div class="card-arrow">→</div>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 4 — Agora -->
+      <a href="#" class="demo-card">
+        <div class="card-preview">
+          <div class="card-preview-grid"></div>
+          <div class="card-preview-icon">🎟️</div>
+          <span class="card-tag live">Live</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Agora — AI Event Manager</h3>
+          <p class="card-desc">Sells tickets and manages table bookings for event planners — end-to-end event commerce, automated.</p>
+          <div class="card-footer">
+            <span class="card-product">AGORA / EVENTS</span>
+            <div class="card-arrow">→</div>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 5 — Ehiz (coming soon) -->
+      <a href="#" class="demo-card coming-soon">
+        <div class="card-preview">
+          <div class="card-preview-grid"></div>
+          <div class="card-preview-icon">🧑‍💼</div>
+          <span class="card-tag">Coming Soon</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Ehiz — AI Hiring Manager</h3>
+          <p class="card-desc">Sources candidates, screens applicants, and simplifies hiring decisions — so you spend time only on the right people.</p>
+          <div class="card-footer">
+            <span class="card-product">EHIZ / RECRUITMENT</span>
+            <div class="card-arrow">→</div>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT STRIP -->
+  <div class="about-strip" id="about">
+    <div class="about-inner">
+      <div class="fade-up">
+        <h2 class="about-headline">
+          AI workers.<br/>
+          Built for<br/>
+          <span>African business.</span>
+        </h2>
+        <a href="https://doubleuai.co" target="_blank" class="about-link">
+          Visit DoubleU AI →
+        </a>
+      </div>
+      <div class="fade-up">
+        <div class="stats-row" style="margin-bottom: 40px;">
+          <div class="stat-item">
+            <div class="stat-num">5<span>+</span></div>
+            <div class="stat-label">AI Products</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">₦1<span>M+</span></div>
+            <div class="stat-label">Orders Processed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">2<span>x</span></div>
+            <div class="stat-label">Countries Active</div>
+          </div>
+        </div>
+        <div class="about-text">
+          <p>BALI Africa is the live demo lab for <strong style="color: var(--text);">DoubleU AI</strong> — where every prototype is a real product deployed in the real world.</p>
+          <p>We build AI workers that plug directly into your business operations: taking orders, booking appointments, managing events, and running your sales pipeline — so your team focuses on what humans do best.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">BALI<span>.</span>africa</div>
+    <div class="footer-copy">© 2026 DoubleU AI. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="https://doubleuai.co" target="_blank">doubleuai.co</a>
+      <a href="mailto:info@doubleuai.co">Contact</a>
+    </div>
+  </footer>
+
+  <script>
+    // Fade-up on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Nav scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      nav.style.borderBottomColor = window.scrollY > 40
+        ? 'rgba(255,255,255,0.1)'
+        : 'rgba(255,255,255,0.07)';
+    });
+  </script>
+
+</body>
+</html>
